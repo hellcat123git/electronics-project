@@ -12,11 +12,11 @@ export default function DiodeSimulation() {
   // Calculate Diode Current
   const calculateCurrent = (v: number) => {
     if (v < 0) return -0.05; // -0.05 uA for reverse
-    if (v >= 0 && v <= 0.6) return 0; // 0 mA before knee
-    // Above 0.6V, exponential rise to 1000mA at 1V
-    const A = 2.48;
-    const B = 15;
-    return A * (Math.exp(B * (v - 0.6)) - 1);
+    if (v >= 0 && v < 0.7) return 0; // 0 mA before exactly 0.7V
+    // Above 0.7V, exponential rise to ~1000mA at 1V
+    const A = 2.0;
+    const B = 20.7;
+    return A * (Math.exp(B * (v - 0.7)) - 1);
   };
 
   const currentId = calculateCurrent(currentVoltage);
@@ -131,7 +131,7 @@ export default function DiodeSimulation() {
               <motion.path
                 d="M 50 150 L 50 50 L 150 50"
                 fill="none"
-                stroke={isForwardBias && currentVoltage > 0.6 ? "#22d3ee" : "#334155"}
+                stroke={isForwardBias && currentVoltage >= 0.7 ? "#22d3ee" : "#334155"}
                 strokeWidth="4"
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: 1 }}
@@ -140,18 +140,18 @@ export default function DiodeSimulation() {
               <motion.path
                 d="M 250 50 L 350 50 L 350 150"
                 fill="none"
-                stroke={isForwardBias && currentVoltage > 0.6 ? "#22d3ee" : "#334155"}
+                stroke={isForwardBias && currentVoltage >= 0.7 ? "#22d3ee" : "#334155"}
                 strokeWidth="4"
               />
               <motion.path
                 d="M 350 150 L 50 150"
                 fill="none"
-                stroke={isForwardBias && currentVoltage > 0.6 ? "#22d3ee" : "#334155"}
+                stroke={isForwardBias && currentVoltage >= 0.7 ? "#22d3ee" : "#334155"}
                 strokeWidth="4"
               />
 
               {/* Current Animation */}
-              {isForwardBias && currentVoltage > 0.6 && (
+              {isForwardBias && currentVoltage >= 0.7 && (
                 <motion.circle
                   r="4"
                   fill="#4ade80"
@@ -248,10 +248,10 @@ export default function DiodeSimulation() {
 
                   {/* Annotations */}
                   {isForwardBias && (
-                    <ReferenceLine x={0.7} stroke="#f59e0b" strokeDasharray="3 3" label={{ position: 'top', value: 'Knee (0.7V)', fill: '#f59e0b', fontSize: 12 }} />
+                    <ReferenceLine x={0.7} stroke="#f59e0b" strokeWidth={2} strokeDasharray="4 4" label={{ position: 'insideTopLeft', value: 'Knee (0.7V)', fill: '#f59e0b', fontSize: 13, fontWeight: 'bold' }} />
                   )}
                   {!isForwardBias && (
-                    <ReferenceLine y={-0.05} stroke="#ef4444" strokeDasharray="3 3" label={{ position: 'bottom', value: 'Leakage ≈ -0.05µA', fill: '#ef4444', fontSize: 12 }} />
+                    <ReferenceLine y={-0.05} stroke="#ef4444" strokeWidth={2} strokeDasharray="4 4" label={{ position: 'insideBottomRight', value: 'Leakage ≈ -0.05µA', fill: '#ef4444', fontSize: 13, fontWeight: 'bold', offset: 20 }} />
                   )}
 
                 </LineChart>
